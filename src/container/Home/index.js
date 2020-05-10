@@ -4,13 +4,25 @@ import './index.css';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 
+import { initializeDb, addDataInDb, updateDataInDb, deleteDataFromDb, searchDataInDb, getAllDataFromDb } from '../../Utilities/commonMethods';
+
 class Home extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {};
+        initializeDb();
+    }
     render(){
-        console.log('home : ', this.props)
         return (
             <React.Fragment>
 
                 <h1>Home</h1>
+
+                <button onClick={addDataInDb}>ADD</button>
+                <button onClick={updateDataInDb}>UPDATE</button>
+                <button onClick={deleteDataFromDb}>DELETE</button>
+                <button onClick={searchDataInDb}>SEARCH</button>
+                <button onClick={getAllDataFromDb}>GET ALL</button>
 
             </React.Fragment>
         );
