@@ -19,12 +19,14 @@ export function initializeDb(callback){
 
         // Create an object store named {OBJECT_STORE_NAME}. Object stores in databases are where data are stored.
         let locations = db.createObjectStore(OBJECT_STORE_NAME, { keyPath: UNIQUE_DB_KEY, autoIncrement: true});
+        // Create db index
         DB_KEYS.map((key)=>{
             locations.createIndex(key, key, { unique: key === UNIQUE_DB_KEY });
         })
     }
     dbReq.onsuccess = function(event) {
         db = event.target.result;
+        console.log('success opening database : ', event);
         callback(true);
     }
     dbReq.onerror = function(event) {
@@ -88,8 +90,6 @@ export function deleteDataFromDb(){
 /** Used to search data in db */
 export function searchDataInDb(){
     var store = getStoreFromDb();
-
-    // Search person
     let searchRequest = store.get("email2");
     searchRequest.onerror = function(e) {
         console.log("Serach Error",e);
@@ -100,17 +100,13 @@ export function searchDataInDb(){
 }
 
 /** Used to fetch all data in db */
-export function getAllDataFromDb(){
-    let allData = [];
+export function getAllDataFromDb(callback){
     var store = getStoreFromDb();
-    var cursor = store.openCursor();
-    cursor.onsuccess = function(e) {
-        var res = e.target.result;
-        if(res) {
-            console.log("Key", res.value);
-            allData.push(res.value);
-            res.continue();
-        }
+    let getAllDataRequest = store.getAll();
+    getAllDataRequest.onsuccess = function(e){
+        callback(e.target.result);
     }
-    return allData;
+    getAllDataRequest.onerror = function(e){
+        callback([]);
+    }
 }

@@ -17,6 +17,7 @@ body{
     color: #FFF;
     border-radius: 50px;
     font-size: 14px;
+    cursor: pointer;
 }
 .nolocation-parent{
     position: absolute;
