@@ -1,30 +1,35 @@
+import { DATABASE_NAME, OBJECT_STORE_NAME, DB_KEYS, UNIQUE_DB_KEY } from './commonConstants';
+
 let db;
 
 /** Used to get store from db */
 function getStoreFromDb(){
-    var transaction = db.transaction(["locations"], "readwrite");
-    var store = transaction.objectStore("locations");
+    var transaction = db.transaction([OBJECT_STORE_NAME], "readwrite");
+    var store = transaction.objectStore(OBJECT_STORE_NAME);
     return store;
 }
 
 /** Used to initialize db */
-export function initializeDb(){
-    let dbReq = indexedDB.open('locationDatabase', 1);
+export function initializeDb(callback){
+    let dbReq = indexedDB.open(DATABASE_NAME, 1);
 
     dbReq.onupgradeneeded = function(event) {    
         // Set the db variable to our database so we can use it!  
         db = event.target.result;
 
-        // Create an object store named locations. Object stores in databases are where data are stored.
-        let locations = db.createObjectStore('locations', { keyPath: "email", autoIncrement: true});
-        console.log('onupgradeneeded locations : ', event, db, locations);
+        // Create an object store named {OBJECT_STORE_NAME}. Object stores in databases are where data are stored.
+        let locations = db.createObjectStore(OBJECT_STORE_NAME, { keyPath: UNIQUE_DB_KEY, autoIncrement: true});
+        DB_KEYS.map((key)=>{
+            locations.createIndex(key, key, { unique: key === UNIQUE_DB_KEY });
+        })
     }
     dbReq.onsuccess = function(event) {
         db = event.target.result;
-        console.log('onsuccess dbReq : ', event, db)
+        callback(true);
     }
     dbReq.onerror = function(event) {
         console.log('error opening database : ', event.target.errorCode);
+        callback(false);
     }
 }
 
@@ -33,9 +38,8 @@ export function addDataInDb(){
     var store = getStoreFromDb();
 
     var person = {
-        name:"name",
-        email:"email-"+parseInt(Math.random()*100),
-        created:new Date()
+        phone_number:"phn-"+parseInt(Math.random()*100),
+        name:"name-"+parseInt(Math.random()*100)
     }
     
     // Perform the add
@@ -97,13 +101,16 @@ export function searchDataInDb(){
 
 /** Used to fetch all data in db */
 export function getAllDataFromDb(){
+    let allData = [];
     var store = getStoreFromDb();
     var cursor = store.openCursor();
     cursor.onsuccess = function(e) {
         var res = e.target.result;
         if(res) {
             console.log("Key", res.value);
+            allData.push(res.value);
             res.continue();
         }
     }
+    return allData;
 }

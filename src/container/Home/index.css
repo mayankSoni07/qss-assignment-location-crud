@@ -1,3 +1,50 @@
 body{
     font-family: Arial;
 }
+.header-div{
+    margin-top: 20px;
+}
+.locaions-label{
+    font-size: 14px;
+    font-weight: 500;
+    color: #404040;
+}
+.add-button{
+    float: right;
+    border: 1px solid;
+    padding: 10px;
+    background-color: #2867B2;
+    color: #FFF;
+    border-radius: 50px;
+    font-size: 14px;
+}
+.nolocation-parent{
+    position: absolute;
+    left: 38%;
+    top: 20%;
+}
+.nolocation-div{
+    background-color: lightgray;
+    border-radius: 100%;
+    width: 200px;
+    height: 200px;
+    padding: 50px;
+}
+.nolocation-img{
+    height: 100%;
+    position: relative;
+}
+.label-1{
+    font-size: 16px;
+    font-weight: 500;
+    color: #404040;
+    margin-top: 10px;
+    margin-left: 50px;
+}
+.label-2{
+    font-size: 12px;
+    font-weight: 500;
+    color: lightgray;
+    margin-top: 10px;
+    margin-left: 55px;
+}
