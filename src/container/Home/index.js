@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 
 import { Table, Toaster } from '../../components';
-import { actionInitializeDb } from '../../redux/actions';
+import { actionInitializeDb, storeDataByKey } from '../../redux/actions';
 import { addDataInDb, updateDataInDb, deleteDataFromDb, searchDataInDb, getAllDataFromDb } from '../../Utilities/commonMethods';
 
 import './index.css';
@@ -28,7 +28,13 @@ class Home extends React.Component {
 
                 <div className="header-div">
                     <span className="locaions-label" >Locations</span>
-                    <span className="add-button" onClick={()=>this.props.history.push('/add-location')} >+ Add Location</span>
+                    <span className="add-button" onClick={()=>{
+                        this.props.history.push('/add-location')
+                        // this.props.storeDataByKey({
+                        //     key: "fetchDataEdit",
+                        //     value: {}
+                        // })
+                    }} >+ Add Location</span>
                 </div>
 
                 {/* No Data screen */}
@@ -58,7 +64,7 @@ const mapStateToProps = state => ({
     isDBInitialized: state.commonReducer.isDBInitialized
 })
 const mapDispatchToProps = (dispatch) => bindActionCreators({ 
-    actionInitializeDb
+    actionInitializeDb, storeDataByKey
 }, dispatch);
 Home = connect(mapStateToProps, mapDispatchToProps)(Home)
 export default Home;

@@ -46,7 +46,6 @@ class Table extends React.Component {
             Cell: props => {
                 return <span className='action'>
                     <span onClick={()=>{
-                        console.log('prps', props)
                         this.props.history.push('/edit-location/'+ props.original.name)
                     }}>Edit</span>
                     <span onClick={()=>{
@@ -60,7 +59,7 @@ class Table extends React.Component {
                 <ReactTable
                     data={allData}
                     columns={columns}
-                    minRows={5}
+                    minRows={10}
                 />
             </div>
         );

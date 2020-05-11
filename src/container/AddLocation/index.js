@@ -9,7 +9,7 @@ import {
 } from '../../Utilities/validation';
 import { STATES, TIME_ZONE, DB_KEYS } from '../../Utilities/commonConstants';
 import { 
-    actionInitializeDb, actionAddData, actionEditData, actionGetDataByName 
+    actionInitializeDb, actionAddData, actionEditData, actionGetDataByName, storeDataByKey
 } from '../../redux/actions';
 
 import { Toaster } from "../../components";
@@ -19,20 +19,50 @@ class AddLocation extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            isGetEditData: false
+            isEditDataFetched: false,
+            isGetEditDataCall: false
         }
+        // if(this.props.match.params.name){
+        //     this.props.initialize({});
+        // }
         this.props.actionInitializeDb();
     }
 
-    componentDidUpdate(){
-        if(this.props.isDBInitialized && this.props.match.params.name && !this.state.isGetEditDataCall){
+    componentDidMount(){
+        if(
+            this.props.isDBInitialized && this.props.match.params.name && 
+            !this.state.isEditDataFetched && !this.state.isGetEditDataCall
+        ){
+            console.log('came here')
             this.props.actionGetDataByName(this.props.match.params.name);
             this.setState({ isGetEditDataCall: true });
         }
-        if(this.props.fetchDataEdit && !this.state.isEditDataFetched){
+    }
+
+    componentDidUpdate(){
+        if(
+            this.props.isDBInitialized && this.props.match.params.name && 
+            !this.state.isEditDataFetched && !this.state.isGetEditDataCall
+        ){
+            console.log('came here 2')
+            this.props.actionGetDataByName(this.props.match.params.name);
+            this.setState({ isGetEditDataCall: true });
+        }
+        if(
+            this.props.isDBInitialized && this.props.fetchDataEdit && Object.keys(this.props.fetchDataEdit).length > 0 && 
+            this.props.match.params.name && this.state.isGetEditDataCall && !this.state.isEditDataFetched
+        ){
+            console.log('came here 3', this.props, this.state)
             this.props.initialize(this.props.fetchDataEdit);
             this.setState({ isEditDataFetched: true });
         }
+    }
+
+    componentWillUnmount(){
+        this.props.storeDataByKey({
+            key: "fetchDataEdit",
+            value: {}
+        });
     }
 
     submit(){
@@ -56,8 +86,7 @@ class AddLocation extends React.Component {
 
     render(){
         console.log('home : ', this.props)
-        const { handleSubmit, pristine, reset, submitting, change, initialize , form} = this.props;
-        console.log('forn', form)
+        const { handleSubmit, pristine, reset, submitting, change, initialize , form, match} = this.props;
         return (
             <div className="addLocation-wrapper">
                 <Toaster />
@@ -71,6 +100,7 @@ class AddLocation extends React.Component {
                         validate={[required, maxLength15, minLength2]}
                         warn={alphaNumeric}
                         required={true}
+                        disabled={match.params.name ? true : false}
                     />
                     <Field
                         name="suite_number"
@@ -170,6 +200,7 @@ class AddLocation extends React.Component {
                     <div className="button-wrapper">
                         <button className="button" type="submit" disabled={submitting}>Submit</button>
                         <button className="button clear-button" type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</button>
+                        <button className="button clear-button" type="button" onClick={()=>this.props.history.push('/')}>Back to Lobby</button>
                     </div>
                     </form>
                 </div>
@@ -183,14 +214,15 @@ const renderField = ({
     input,
     label,
     type,
+    disabled,
     meta: { touched, error, warning }
     }) => {
         return <div className="input-wrapper">
             <label className="input-label">{required ? <>{label} <span className="require-sign">*</span></> : <>{label}</>}</label>
             <div className="input-div">
-            <input className="input-box" onChange={(e)=>{
+            <input className={disabled ? "input-box disabled-input" : "input-box"} onChange={(e)=>{
                 console.log('e', e)
-            }} {...input} placeholder={label} type={type} />
+            }} {...input} placeholder={label} type={type} disabled={disabled} />
             {touched &&
                 ((error && <div className="error-msg">{error}</div>) ||
                 (warning && <div className="error-msg">{warning}</div>))}
@@ -198,6 +230,9 @@ const renderField = ({
         </div>
     }
 const renderDropdown = ({
+        data,
+        valueField,
+        textField,
         fieldName,
         required,
         change,
@@ -210,9 +245,9 @@ const renderDropdown = ({
                 <DropdownList
                     className="input-div input-box"
                     placeholder={placeholder}
-                    data={TIME_ZONE}
-                    valueField="abbr"
-                    textField="text"
+                    data={data}
+                    valueField={valueField}
+                    textField={textField}
                     onChange={(value) => change(fieldName, value)}
                     value={currentData}
                 />
@@ -223,11 +258,11 @@ const renderDropdown = ({
 const mapStateToProps = state => ({
     form: state.form.addLocationForm,
     isDBInitialized: state.commonReducer.isDBInitialized,
-    fetchDataEdit: state.commonReducer.fetchDataEdit
+    fetchDataEdit: state.commonReducer.fetchDataEdit,
 })
 const mapDispatchToProps = (dispatch) => bindActionCreators({ 
-    actionInitializeDb, actionAddData, actionEditData, actionGetDataByName
+    actionInitializeDb, actionAddData, actionEditData, actionGetDataByName, storeDataByKey
 }, dispatch);
 
 AddLocation = connect(mapStateToProps, mapDispatchToProps)(AddLocation)
-export default reduxForm({ form: 'addLocationForm' })(AddLocation)
+export default reduxForm({ form: 'addLocationForm', enableReinitialize: true })(AddLocation)
