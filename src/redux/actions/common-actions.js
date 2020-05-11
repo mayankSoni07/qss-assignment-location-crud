@@ -1,8 +1,10 @@
 import * as constants from '../constants';
-import { showToast, initializeDb, getAllDataFromDb, addDataInDb, deleteDataFromDb } from '../../Utilities/commonMethods';
+import { 
+    showToast, initializeDb, getAllDataFromDb, addDataInDb, updateDataInDb, deleteDataFromDb, searchDataInDb
+} from '../../Utilities/commonMethods';
 
 /** Intialize Database Action */
-export function actionInitializeDb(){
+export function actionInitializeDb(callback){
     return (dispatch, getState) => {
         initializeDb((value)=>{
             if(value){
@@ -31,8 +33,18 @@ export function actionGetAllDataFromDb(){
 /** Add Data Action */
 export function actionAddData(requestData, history){
     return (dispatch, getState) => {
-        console.log('requestData  aciton s :  ', requestData)
+        console.log('requestData add data :  ', requestData)
         addDataInDb(requestData, (param)=>{
+            ToastHandeler(param, history);
+        });
+    }
+}
+
+/** Edit Data Action */
+export function actionEditData(requestData, history) {
+    return (dispatch, getState) => {
+        console.log('requestData edit data :  ', requestData)
+        updateDataInDb(requestData, (param)=>{
             ToastHandeler(param, history);
         });
     }
@@ -46,6 +58,19 @@ export function actionDeleteData(name){
             if(!param.isError){
                 dispatch(actionGetAllDataFromDb())
             }
+        })
+    }
+}
+
+/** Used to get data by give name */
+export function actionGetDataByName(name){
+    return (dispatch, getState) => {
+        searchDataInDb(name, (param)=>{
+            ToastHandeler(param);
+            dispatch(storeDataByKey({
+                key: "fetchDataEdit",
+                value: param.data
+            }))
         })
     }
 }

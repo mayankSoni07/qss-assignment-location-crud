@@ -3,6 +3,7 @@ import { DATABASE_NAME, OBJECT_STORE_NAME, DB_KEYS, UNIQUE_DB_KEY } from './comm
 
 let db;
 
+/** Used to show Toaster */
 export function showToast(param){
     const { type, message } = param;
     if(type === "success"){
@@ -54,7 +55,7 @@ export function addDataInDb(requestData, callback){
         console.log("Add data success : ", e);
         callback({
             isError: false,
-            message: "Successfully added data"
+            message: "Added data successfully"
         });
     }
     request.onerror = function(e) {
@@ -67,22 +68,23 @@ export function addDataInDb(requestData, callback){
 }
 
 /** Used to update data in db */
-export function updateDataInDb(){
+export function updateDataInDb(requestData, callback){
     var store = getStoreFromDb();
-
-    var person = {
-        name:"hello",
-        email:"email-9",
-        created:new Date()
-    }
-
     // Perform the update
-    var request = store.put(person);
+    var request = store.put(requestData);
     request.onerror = function(e) {
         console.log("Update Data Error : ",e);
+        callback({
+            isError: true,
+            message: e.target.error.message
+        });
     }
     request.onsuccess = function(e) {
         console.log("Update data success : ", e);
+        callback({
+            isError: false,
+            message: "Updated data successfully"
+        });
     }
 }
 
@@ -108,14 +110,23 @@ export function deleteDataFromDb(name, callback){
 }
 
 /** Used to search data in db */
-export function searchDataInDb(){
+export function searchDataInDb(name, callback){
     var store = getStoreFromDb();
-    let searchRequest = store.get("email2");
-    searchRequest.onerror = function(e) {
-        console.log("Serach Error",e);
-    }
+    let searchRequest = store.get(name);
     searchRequest.onsuccess = function(e) {
         console.log("Search result ", e);
+        if(e.target.result){
+            callback({
+                isError: false,
+                message: "Fetch data successfully",
+                data: e.target.result
+            });
+        } else {
+            callback({
+                isError: true,
+                message: "Data doesn't exist in Database."
+            });
+        }
     }
 }
 
@@ -130,3 +141,14 @@ export function getAllDataFromDb(callback){
         callback([]);
     }
 }
+
+/** Used to format number in US format */
+export function formatPhoneNumber(phoneNumberString) {
+    var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+    if (match) {
+      var intlCode = (match[1] ? '+1 ' : '')
+      return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
+    }
+    return null
+  }

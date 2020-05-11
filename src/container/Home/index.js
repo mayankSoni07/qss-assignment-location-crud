@@ -9,21 +9,22 @@ import { addDataInDb, updateDataInDb, deleteDataFromDb, searchDataInDb, getAllDa
 import './index.css';
 
 class Home extends React.Component {
-    componentDidMount(){
+    constructor(props){
+        super(props);
         this.props.actionInitializeDb();
     }
 
     render(){
         console.log('home : ', this.props);
-        const { isDBInitialized, allData } = this.props;
+        const { isDBInitialized, allData, history } = this.props;
         return (
             <React.Fragment>
                 <Toaster />
-                <button onClick={addDataInDb}>ADD</button>
+                {/* <button onClick={addDataInDb}>ADD</button>
                 <button onClick={updateDataInDb}>UPDATE</button>
                 <button onClick={deleteDataFromDb}>DELETE</button>
                 <button onClick={searchDataInDb}>SEARCH</button>
-                <button onClick={getAllDataFromDb}>GET ALL</button>
+                <button onClick={getAllDataFromDb}>GET ALL</button> */}
 
                 <div className="header-div">
                     <span className="locaions-label" >Locations</span>
@@ -44,7 +45,7 @@ class Home extends React.Component {
 
                 {
                     isDBInitialized && allData && allData.length > 0 && 
-                    <Table />
+                    <Table history={history} />
                 }
 
             </React.Fragment>

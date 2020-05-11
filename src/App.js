@@ -13,7 +13,8 @@ class App extends React.Component {
         <Router>
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route exact path="/add-location" component={AddLocation} />
+            <Route path="/add-location" component={AddLocation} />
+            <Route path="/edit-location/:name" component={AddLocation} />
           </Switch>
         </Router>
       </Provider>

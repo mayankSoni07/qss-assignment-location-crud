@@ -5,6 +5,7 @@ import ReactTable from 'react-table-v6';
 
 import { actionDeleteData } from '../../redux/actions';
 import { ADDRESS_KEYS } from '../../Utilities/commonConstants';
+import { formatPhoneNumber } from '../../Utilities/commonMethods';
 import './index.css';
 
 class Table extends React.Component {
@@ -17,10 +18,10 @@ class Table extends React.Component {
         console.log('Table : ', this.props);
         const { allData } = this.props;
         const columns = [{
-            Header: 'Name',
+            Header: <span><b>Name</b></span>,
             accessor: 'name'
           }, {
-            Header: 'Address',
+            Header: <span><b>Address</b></span>,
             accessor: 'address',
             Cell: props => {
                 let address = "";
@@ -36,14 +37,18 @@ class Table extends React.Component {
                 return <span className='address'>{address}</span>
             }
           }, {
-            Header: 'Phone Number',
-            accessor: 'phone_number'
+            Header: <span><b>Phone Number</b></span>,
+            accessor: 'phone_number',
+            Cell: props => <span>{formatPhoneNumber(props.original.phone_number)}</span>
           }, {
-            Header: 'Action',
+            Header: <span><b>Action</b></span>,
             accessor: 'action',
             Cell: props => {
                 return <span className='action'>
-                    <span>Edit</span>
+                    <span onClick={()=>{
+                        console.log('prps', props)
+                        this.props.history.push('/edit-location/'+ props.original.name)
+                    }}>Edit</span>
                     <span onClick={()=>{
                         this.props.actionDeleteData(props.original.name)
                     }}>Delete</span>
@@ -55,7 +60,7 @@ class Table extends React.Component {
                 <ReactTable
                     data={allData}
                     columns={columns}
-                    minRows={0}
+                    minRows={5}
                 />
             </div>
         );

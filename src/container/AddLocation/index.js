@@ -8,14 +8,31 @@ import {
     required, maxLength15, maxLength10, minLength2, minLength5, alphaNumeric, noSpace, phoneNumber 
 } from '../../Utilities/validation';
 import { STATES, TIME_ZONE, DB_KEYS } from '../../Utilities/commonConstants';
-import { actionInitializeDb, actionAddData } from '../../redux/actions';
+import { 
+    actionInitializeDb, actionAddData, actionEditData, actionGetDataByName 
+} from '../../redux/actions';
 
 import { Toaster } from "../../components";
 import './index.css';
 
 class AddLocation extends React.Component {
-    componentDidMount(){
+    constructor(props){
+        super(props);
+        this.state = {
+            isGetEditData: false
+        }
         this.props.actionInitializeDb();
+    }
+
+    componentDidUpdate(){
+        if(this.props.isDBInitialized && this.props.match.params.name && !this.state.isGetEditDataCall){
+            this.props.actionGetDataByName(this.props.match.params.name);
+            this.setState({ isGetEditDataCall: true });
+        }
+        if(this.props.fetchDataEdit && !this.state.isEditDataFetched){
+            this.props.initialize(this.props.fetchDataEdit);
+            this.setState({ isEditDataFetched: true });
+        }
     }
 
     submit(){
@@ -29,13 +46,18 @@ class AddLocation extends React.Component {
                 requestData[key] = "";
             }
         })
-        this.props.actionAddData(requestData, this.props.history);
+        if(this.props.match.params){
+            this.props.actionEditData(requestData, this.props.history);
+        } else {
+            this.props.actionAddData(requestData, this.props.history);
+        }
         console.log('request Data : ', requestData)
     }
 
     render(){
         console.log('home : ', this.props)
-        const { handleSubmit, pristine, reset, submitting, change } = this.props;
+        const { handleSubmit, pristine, reset, submitting, change, initialize , form} = this.props;
+        console.log('forn', form)
         return (
             <div className="addLocation-wrapper">
                 <Toaster />
@@ -94,6 +116,7 @@ class AddLocation extends React.Component {
                         valueField="key"
                         textField="value"
                         change={this.props.change}
+                        currentData={form && form.values && form.values["state"]}
                     />
                     <Field
                         name="zipcode"
@@ -124,6 +147,7 @@ class AddLocation extends React.Component {
                         valueField="abbr"
                         textField="text"
                         change={change}
+                        currentData={form && form.values && form.values["timezone"]}
                     />
                     <Field
                         name="facility_time"
@@ -174,31 +198,35 @@ const renderField = ({
         </div>
     }
 const renderDropdown = ({
-        name,
         fieldName,
         required,
         change,
-        label
+        label,
+        placeholder,
+        currentData
         }) => {
             return <div className="input-wrapper">
                 <label className="input-label">{required ? <>{label} <span className="require-sign">*</span></> : <>{label}</>}</label>
                 <DropdownList
                     className="input-div input-box"
-                    placeholder="Time Zone"
+                    placeholder={placeholder}
                     data={TIME_ZONE}
                     valueField="abbr"
                     textField="text"
                     onChange={(value) => change(fieldName, value)}
+                    value={currentData}
                 />
             </div>
         }
 
 
 const mapStateToProps = state => ({
-    form: state.form.addLocationForm
+    form: state.form.addLocationForm,
+    isDBInitialized: state.commonReducer.isDBInitialized,
+    fetchDataEdit: state.commonReducer.fetchDataEdit
 })
 const mapDispatchToProps = (dispatch) => bindActionCreators({ 
-    actionInitializeDb, actionAddData 
+    actionInitializeDb, actionAddData, actionEditData, actionGetDataByName
 }, dispatch);
 
 AddLocation = connect(mapStateToProps, mapDispatchToProps)(AddLocation)
