@@ -87,15 +87,23 @@ export function updateDataInDb(){
 }
 
 /** Used to delete data from db */
-export function deleteDataFromDb(){
+export function deleteDataFromDb(name, callback){
     var store = getStoreFromDb();
 
-    var request = store.delete("email-95");
+    var request = store.delete(name);
     request.onerror = function(e) {
         console.log("Delete Data Error : ",e);
+        callback({
+            isError: true,
+            message: e.target.error.message
+        });
     }
     request.onsuccess = function(e) {
         console.log("Delete data success : ", e);
+        callback({
+            isError: false,
+            message: "Data deleted successfully"
+        });
     }
 }
 

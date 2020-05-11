@@ -188,7 +188,7 @@ const renderDropdown = ({
                     data={TIME_ZONE}
                     valueField="abbr"
                     textField="text"
-                    onSelect={(value) => change(fieldName, value)}
+                    onChange={(value) => change(fieldName, value)}
                 />
             </div>
         }

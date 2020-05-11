@@ -1,10 +1,11 @@
 import React from 'react';
-import './index.css';
-
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
-
 import ReactTable from 'react-table-v6';
+
+import { actionDeleteData } from '../../redux/actions';
+import { ADDRESS_KEYS } from '../../Utilities/commonConstants';
+import './index.css';
 
 class Table extends React.Component {
     constructor(props){
@@ -14,34 +15,45 @@ class Table extends React.Component {
 
     render(){
         console.log('Table : ', this.props);
-        const data = [{
-            name: 'Tanner Linsley',
-            age: 26,
-            friend: {
-              name: 'Jason Maurer',
-              age: 23,
-            }
-          }]
-         
-          const columns = [{
+        const { allData } = this.props;
+        const columns = [{
             Header: 'Name',
             accessor: 'name'
           }, {
-            Header: 'Age',
-            accessor: 'age',
-            Cell: props => <span className='number'>{props.value}</span>
+            Header: 'Address',
+            accessor: 'address',
+            Cell: props => {
+                let address = "";
+                ADDRESS_KEYS.map((item)=>{
+                    if(props.original[item] && props.original[item].length){
+                        if(address.length){
+                            address = address + ", " + props.original[item];    
+                        } else {
+                            address = props.original[item];
+                        }
+                    }
+                })
+                return <span className='address'>{address}</span>
+            }
           }, {
-            id: 'friendName',
-            Header: 'Friend Name',
-            accessor: d => d.friend.name
+            Header: 'Phone Number',
+            accessor: 'phone_number'
           }, {
-            Header: props => <span>Friend Age</span>,
-            accessor: 'friend.age'
+            Header: 'Action',
+            accessor: 'action',
+            Cell: props => {
+                return <span className='action'>
+                    <span>Edit</span>
+                    <span onClick={()=>{
+                        this.props.actionDeleteData(props.original.name)
+                    }}>Delete</span>
+                </span>
+            }
           }]
         return (
             <div className="table-wrapper">
                 <ReactTable
-                    data={data}
+                    data={allData}
                     columns={columns}
                     minRows={0}
                 />
@@ -55,6 +67,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({ 
+    actionDeleteData
 }, dispatch);
 
 Table = connect(mapStateToProps, mapDispatchToProps)(Table)
