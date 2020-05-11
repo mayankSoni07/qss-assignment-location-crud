@@ -1,6 +1,16 @@
+import { toast } from 'react-toastify';
 import { DATABASE_NAME, OBJECT_STORE_NAME, DB_KEYS, UNIQUE_DB_KEY } from './commonConstants';
 
 let db;
+
+export function showToast(param){
+    const { type, message } = param;
+    if(type === "success"){
+        toast.success(message);
+    } else {
+        toast.error(message);
+    }
+}
 
 /** Used to get store from db */
 function getStoreFromDb(){
@@ -36,21 +46,23 @@ export function initializeDb(callback){
 }
 
 /** Used to add data in db */
-export function addDataInDb(){
+export function addDataInDb(requestData, callback){
     var store = getStoreFromDb();
-
-    var person = {
-        phone_number:"phn-"+parseInt(Math.random()*100),
-        name:"name-"+parseInt(Math.random()*100)
-    }
-    
     // Perform the add
-    var request = store.add(person);
-    request.onerror = function(e) {
-        console.log("Add Data Error : ",e);
-    }
+    var request = store.add(requestData);
     request.onsuccess = function(e) {
         console.log("Add data success : ", e);
+        callback({
+            isError: false,
+            message: "Successfully added data"
+        });
+    }
+    request.onerror = function(e) {
+        console.log("Add Data Error : ",e);
+        callback({
+            isError: true,
+            message: e.target.error.message
+        });
     }
 }
 

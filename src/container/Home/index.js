@@ -1,19 +1,14 @@
 import React from 'react';
-import './index.css';
-
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 
-import { Table } from '../../components';
-import { actionGetAllDataFromDb, actionInitializeDb } from '../../redux/actions';
+import { Table, Toaster } from '../../components';
+import { actionInitializeDb } from '../../redux/actions';
 import { addDataInDb, updateDataInDb, deleteDataFromDb, searchDataInDb, getAllDataFromDb } from '../../Utilities/commonMethods';
 
-class Home extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = { };
-    }
+import './index.css';
 
+class Home extends React.Component {
     componentDidMount(){
         this.props.actionInitializeDb();
     }
@@ -23,6 +18,7 @@ class Home extends React.Component {
         const { isDBInitialized, allData } = this.props;
         return (
             <React.Fragment>
+                <Toaster />
                 <button onClick={addDataInDb}>ADD</button>
                 <button onClick={updateDataInDb}>UPDATE</button>
                 <button onClick={deleteDataFromDb}>DELETE</button>
@@ -31,7 +27,7 @@ class Home extends React.Component {
 
                 <div className="header-div">
                     <span className="locaions-label" >Locations</span>
-                    <span className="add-button" >+ Add Location</span>
+                    <span className="add-button" onClick={()=>this.props.history.push('/add-location')} >+ Add Location</span>
                 </div>
 
                 {/* No Data screen */}
@@ -60,11 +56,8 @@ const mapStateToProps = state => ({
     allData: state.commonReducer.allData,
     isDBInitialized: state.commonReducer.isDBInitialized
 })
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({ 
-    actionGetAllDataFromDb, actionInitializeDb
+    actionInitializeDb
 }, dispatch);
-
 Home = connect(mapStateToProps, mapDispatchToProps)(Home)
-
 export default Home;

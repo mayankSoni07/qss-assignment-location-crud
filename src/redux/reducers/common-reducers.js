@@ -1,6 +1,8 @@
 import * as actionConstants from '../constants';
 
-const initialState = { allData: [], isDBInitialized: false };
+const initialState = { 
+    allData: [], isDBInitialized: false
+};
 
 export const commonReducer = (state = initialState, action) => {
     switch (action.type) {

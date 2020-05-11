@@ -1,5 +1,5 @@
 import * as constants from '../constants';
-import { initializeDb, getAllDataFromDb } from '../../Utilities/commonMethods';
+import { showToast, initializeDb, getAllDataFromDb, addDataInDb } from '../../Utilities/commonMethods';
 
 export function actionInitializeDb(){
     return (dispatch, getState) => {
@@ -23,6 +23,21 @@ export function actionGetAllDataFromDb(){
                 value: data
             }))
         })
+    }
+}
+
+export function actionAddData(requestData, history){
+    return (dispatch, getState) => {
+        console.log('requestData  aciton s :  ', requestData)
+        addDataInDb(requestData, (param)=>{
+            const { isError, message } = param;
+            if(isError){
+                showToast({ type: "error", message: message });
+            } else {
+                history.push('/');
+                showToast({ type: "success", message: message });
+            }
+        });
     }
 }
 

@@ -10,7 +10,10 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-table-v6": "^6.8.6",
+    "react-toastify": "^6.0.0",
+    "react-widgets": "^4.5.0",
     "redux": "^4.0.5",
+    "redux-form": "^8.3.5",
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
