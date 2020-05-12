@@ -12,7 +12,7 @@ Third party libraries and Database used :
 * React-router : For routing
 * Redux : For data management
 * React-table-v6 : For listing of data
-* React-tostify : To show alert in toast
+* React-toastify : To show alert in toast
 * Redux-form : For Add/Edit location form
 
 
