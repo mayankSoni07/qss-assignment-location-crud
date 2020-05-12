@@ -15,7 +15,6 @@ class Home extends React.Component {
     }
 
     render(){
-        console.log('home : ', this.props);
         const { isDBInitialized, allData, history } = this.props;
         return (
             <React.Fragment>
@@ -48,7 +47,7 @@ class Home extends React.Component {
                         <div className="label-2">There is no location added right now</div>
                     </div>
                 }
-
+                {/* Data Table Screen */}
                 {
                     isDBInitialized && allData && allData.length > 0 && 
                     <Table history={history} />

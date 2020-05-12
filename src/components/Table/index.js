@@ -15,7 +15,6 @@ class Table extends React.Component {
     }
 
     render(){
-        console.log('Table : ', this.props);
         const { allData } = this.props;
         const columns = [{
             Header: <span><b>Name</b></span>,
@@ -45,12 +44,18 @@ class Table extends React.Component {
             accessor: 'action',
             Cell: props => {
                 return <span className='action'>
-                    <span onClick={()=>{
-                        this.props.history.push('/edit-location/'+ props.original.name)
-                    }}>Edit</span>
-                    <span onClick={()=>{
-                        this.props.actionDeleteData(props.original.name)
-                    }}>Delete</span>
+                    <img 
+                        className="edit-img" alt="Edit" src={require("../../Assests/Edit.png")} 
+                        onClick={()=>{
+                            this.props.history.push('/edit-location/'+ props.original.name)
+                        }}
+                    />
+                    <img 
+                        className="delete-img" alt="Delete" src={require("../../Assests/Delete.png")} 
+                        onClick={()=>{
+                            this.props.actionDeleteData(props.original.name)
+                        }}
+                    />
                 </span>
             }
           }]

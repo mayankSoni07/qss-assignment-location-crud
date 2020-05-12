@@ -12,7 +12,7 @@ import {
     actionInitializeDb, actionAddData, actionEditData, actionGetDataByName, storeDataByKey
 } from '../../redux/actions';
 
-import { Toaster } from "../../components";
+import { Toaster, FacilityTimesModal } from "../../components";
 import './index.css';
 
 class AddLocation extends React.Component {
@@ -20,12 +20,13 @@ class AddLocation extends React.Component {
         super(props);
         this.state = {
             isEditDataFetched: false,
-            isGetEditDataCall: false
+            isGetEditDataCall: false,
+            isFacilityModalOpen: false
         }
-        // if(this.props.match.params.name){
-        //     this.props.initialize({});
-        // }
         this.props.actionInitializeDb();
+
+        this.openFacilityModal = this.openFacilityModal.bind(this);
+        this.closeFacilityModal = this.closeFacilityModal.bind(this);
     }
 
     componentDidMount(){
@@ -33,7 +34,6 @@ class AddLocation extends React.Component {
             this.props.isDBInitialized && this.props.match.params.name && 
             !this.state.isEditDataFetched && !this.state.isGetEditDataCall
         ){
-            console.log('came here')
             this.props.actionGetDataByName(this.props.match.params.name);
             this.setState({ isGetEditDataCall: true });
         }
@@ -44,7 +44,6 @@ class AddLocation extends React.Component {
             this.props.isDBInitialized && this.props.match.params.name && 
             !this.state.isEditDataFetched && !this.state.isGetEditDataCall
         ){
-            console.log('came here 2')
             this.props.actionGetDataByName(this.props.match.params.name);
             this.setState({ isGetEditDataCall: true });
         }
@@ -52,7 +51,6 @@ class AddLocation extends React.Component {
             this.props.isDBInitialized && this.props.fetchDataEdit && Object.keys(this.props.fetchDataEdit).length > 0 && 
             this.props.match.params.name && this.state.isGetEditDataCall && !this.state.isEditDataFetched
         ){
-            console.log('came here 3', this.props, this.state)
             this.props.initialize(this.props.fetchDataEdit);
             this.setState({ isEditDataFetched: true });
         }
@@ -66,7 +64,6 @@ class AddLocation extends React.Component {
     }
 
     submit(){
-        console.log('submit', this.props);
         let formData = this.props.form.values;
         let requestData = {};
         DB_KEYS.map((key)=>{
@@ -81,15 +78,32 @@ class AddLocation extends React.Component {
         } else {
             this.props.actionAddData(requestData, this.props.history);
         }
-        console.log('request Data : ', requestData)
+    }
+
+    openFacilityModal(){
+        this.setState({ isFacilityModalOpen: true });
+    }
+
+    closeFacilityModal(){
+        this.setState({ isFacilityModalOpen: false });
     }
 
     render(){
-        console.log('home : ', this.props)
         const { handleSubmit, pristine, reset, submitting, change, initialize , form, match} = this.props;
         return (
             <div className="addLocation-wrapper">
+
+                {/* Toaster for success/error alert */}
                 <Toaster />
+                
+                {/* Facility times modal */}
+                {this.state.isFacilityModalOpen &&
+                    <FacilityTimesModal
+                        form={form}
+                        change={change} closeFacilityModal={this.closeFacilityModal} 
+                    />
+                }
+                
                 <div className="form-wrapper">
                     <form onSubmit={handleSubmit(this.submit.bind(this))}>
                     <Field
@@ -97,8 +111,7 @@ class AddLocation extends React.Component {
                         type="text"
                         component={renderField}
                         label="Location Name"
-                        validate={[required, maxLength15, minLength2]}
-                        warn={alphaNumeric}
+                        validate={[required, alphaNumeric, maxLength15, minLength2]}
                         required={true}
                         disabled={match.params.name ? true : false}
                     />
@@ -108,7 +121,6 @@ class AddLocation extends React.Component {
                         component={renderField}
                         label="Suite No."
                         validate={[maxLength15, minLength2]}
-                        warn={alphaNumeric}
                     />
                     <Field
                         name="address_line_1"
@@ -116,7 +128,6 @@ class AddLocation extends React.Component {
                         component={renderField}
                         label="Address Line 1"
                         validate={[maxLength15, minLength2]}
-                        warn={alphaNumeric}
                     />
                     <Field
                         name="address_line_2"
@@ -124,7 +135,6 @@ class AddLocation extends React.Component {
                         component={renderField}
                         label="Address Line 2"
                         validate={[maxLength15, minLength2]}
-                        warn={alphaNumeric}
                     />
                     <Field
                         name="city"
@@ -132,10 +142,10 @@ class AddLocation extends React.Component {
                         component={renderField}
                         label="City"
                         validate={[maxLength15, minLength2]}
-                        warn={alphaNumeric}
                         // required={true}
                     />
                     <Field
+                        name="state"
                         label="State"
                         className="input-div input-box"
                         fieldName="state"
@@ -155,7 +165,6 @@ class AddLocation extends React.Component {
                         label="Zipcode"
                         // required={true}
                         validate={[alphaNumeric, maxLength10, minLength5, noSpace]}
-                        warn={alphaNumeric}
                     />
                     <Field
                         name="phone_number"
@@ -164,9 +173,9 @@ class AddLocation extends React.Component {
                         label="Phone Number"
                         // required={true}
                         validate={[phoneNumber]}
-                        warn={alphaNumeric}
                     />
                     <Field
+                        name="timezone"
                         label="Time Zone"
                         className="input-div input-box"
                         fieldName="timezone"
@@ -181,12 +190,10 @@ class AddLocation extends React.Component {
                     />
                     <Field
                         name="facility_time"
-                        type="text"
-                        component={renderField}
+                        component={renderButton}
                         label="Facility Times"
-                        // required={true}
-                        validate={[maxLength15, minLength2]}
-                        warn={alphaNumeric}
+                        onClick={this.openFacilityModal}
+                        buttonText="Enter facility time"
                     />
                     <Field
                         name="appoinment_pool"
@@ -195,12 +202,11 @@ class AddLocation extends React.Component {
                         label="Appointment Pool"
                         // required={true}
                         validate={[maxLength15, minLength2]}
-                        warn={alphaNumeric}
                     />
                     <div className="button-wrapper">
-                        <button className="button" type="submit" disabled={submitting}>Submit</button>
-                        <button className="button clear-button" type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</button>
-                        <button className="button clear-button" type="button" onClick={()=>this.props.history.push('/')}>Back to Lobby</button>
+                        <button className="save-button" type="submit" disabled={submitting}>Save</button>
+                        <button className="clear-button" type="button" onClick={()=>this.props.history.push('/')}>Cancel</button>
+                        <button className="save-button" type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</button>
                     </div>
                     </form>
                 </div>
@@ -209,21 +215,32 @@ class AddLocation extends React.Component {
     }
 }
 
+const renderButton = (props)=>{
+    return <div className="input-wrapper">
+        <label className="input-label">{props.required ? <>{props.label} <span className="require-sign">*</span></> : <>{props.label}</>}</label>
+        <div className="input-div">
+            <div className="input-button-field" onClick={props.onClick}>{props.buttonText}</div>
+        </div>
+    </div>
+}
 const renderField = ({
     required,
     input,
     label,
     type,
     disabled,
-    meta: { touched, error, warning }
+    meta: { touched, error, warning },
+    onClick
     }) => {
         return <div className="input-wrapper">
             <label className="input-label">{required ? <>{label} <span className="require-sign">*</span></> : <>{label}</>}</label>
             <div className="input-div">
-            <input className={disabled ? "input-box disabled-input" : "input-box"} onChange={(e)=>{
-                console.log('e', e)
-            }} {...input} placeholder={label} type={type} disabled={disabled} />
-            {touched &&
+                <input 
+                    className={disabled ? "input-box disabled-input" : "input-box"}
+                    {...input} placeholder={label} type={type} disabled={disabled} 
+                    onClick={onClick}
+                />
+                {touched &&
                 ((error && <div className="error-msg">{error}</div>) ||
                 (warning && <div className="error-msg">{warning}</div>))}
             </div>

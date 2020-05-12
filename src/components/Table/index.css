@@ -1,3 +1,14 @@
 .table-wrapper{
     margin-top: 50px;
 }
+.edit-img{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.delete-img{
+    width: 15px;
+    height: 20px;
+    margin-left: 5px;
+    cursor: pointer;
+}

@@ -33,7 +33,6 @@ export function actionGetAllDataFromDb(){
 /** Add Data Action */
 export function actionAddData(requestData, history){
     return (dispatch, getState) => {
-        console.log('requestData add data :  ', requestData)
         addDataInDb(requestData, (param)=>{
             ToastHandeler(param, history);
         });
@@ -43,7 +42,6 @@ export function actionAddData(requestData, history){
 /** Edit Data Action */
 export function actionEditData(requestData, history) {
     return (dispatch, getState) => {
-        console.log('requestData edit data :  ', requestData)
         updateDataInDb(requestData, (param)=>{
             ToastHandeler(param, history);
         });

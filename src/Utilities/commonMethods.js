@@ -37,11 +37,9 @@ export function initializeDb(callback){
     }
     dbReq.onsuccess = function(event) {
         db = event.target.result;
-        console.log('success opening database : ', event);
         callback(true);
     }
     dbReq.onerror = function(event) {
-        console.log('error opening database : ', event.target.errorCode);
         callback(false);
     }
 }
@@ -52,14 +50,12 @@ export function addDataInDb(requestData, callback){
     // Perform the add
     var request = store.add(requestData);
     request.onsuccess = function(e) {
-        console.log("Add data success : ", e);
         callback({
             isError: false,
             message: "Added data successfully"
         });
     }
     request.onerror = function(e) {
-        console.log("Add Data Error : ",e);
         callback({
             isError: true,
             message: e.target.error.message
@@ -73,14 +69,12 @@ export function updateDataInDb(requestData, callback){
     // Perform the update
     var request = store.put(requestData);
     request.onerror = function(e) {
-        console.log("Update Data Error : ",e);
         callback({
             isError: true,
             message: e.target.error.message
         });
     }
     request.onsuccess = function(e) {
-        console.log("Update data success : ", e);
         callback({
             isError: false,
             message: "Updated data successfully"
@@ -94,14 +88,12 @@ export function deleteDataFromDb(name, callback){
 
     var request = store.delete(name);
     request.onerror = function(e) {
-        console.log("Delete Data Error : ",e);
         callback({
             isError: true,
             message: e.target.error.message
         });
     }
     request.onsuccess = function(e) {
-        console.log("Delete data success : ", e);
         callback({
             isError: false,
             message: "Data deleted successfully"
@@ -114,7 +106,6 @@ export function searchDataInDb(name, callback){
     var store = getStoreFromDb();
     let searchRequest = store.get(name);
     searchRequest.onsuccess = function(e) {
-        console.log("Search result ", e);
         if(e.target.result){
             callback({
                 isError: false,
