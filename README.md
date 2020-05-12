@@ -6,6 +6,16 @@ Description : Listing page to show locations in list with sorting and pagination
 Website : https://www.qsstechnosoft.com/
 
 
+Third party libraries and Database used : 
+
+* IndexDB : As a database
+* React-router : For routing
+* Redux : For data management
+* React-table-v6 : For listing of data
+* React-tostify : To show alert in toast
+* Redux-form : For Add/Edit location form
+
+
 Commands to run in terminal :
 
 npm install

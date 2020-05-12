@@ -178,8 +178,11 @@ class FacilityTimesModal extends React.Component{
                             </div>
 
                             <div 
-                                className="apply-all-checked"
-                                onClick={() => this.applyAllChecked(item)}
+                                className={WEEKENDS.includes(item) ? "apply-all-disabled" : "apply-all-checked"}
+                                onClick={() => {
+                                    if(!WEEKENDS.includes(item))
+                                        this.applyAllChecked(item)
+                                }}
                             >
                                 Apply to All Checked
                             </div>

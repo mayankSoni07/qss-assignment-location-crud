@@ -111,6 +111,17 @@
     flex: 0.2;
     cursor: pointer;
 }
+.apply-all-disabled{
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-size: 10px;
+    color: gray;
+    font-weight: 500;
+    padding-left: 25px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    flex: 0.2 1;
+}
 .cancel-save-button-wrapper{
     display: flex;
     float: right;
